@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aplicar no Batch — Koinz Capital</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700;1,800&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ── Page Layout ── */
+    .apply-page {
+      min-height: 100vh;
+      padding: 100px 1rem 60px;
+      background: var(--navy);
+    }
+    .apply-wrapper {
+      max-width: 640px;
+      margin: 0 auto;
+    }
+    .apply-header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    .apply-header h1 {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 4vw, 40px);
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.15;
+      margin-bottom: 0.75rem;
+    }
+    .apply-header h1 em { font-style: italic; color: var(--accent2); }
+    .apply-header p {
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    /* ── Form Card ── */
+    .form-card {
+      background: #f5f4f0;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    /* ── Section Block ── */
+    .form-section {
+      padding: 28px 28px 24px;
+      border-bottom: 1px solid #e2e0da;
+    }
+    .form-section:last-child { border-bottom: none; }
+
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #8a8880;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-hint {
+      font-size: 12px;
+      color: #8a8880;
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+    .section-label .badge {
+      background: #e2e0da;
+      color: #8a8880;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 9px;
+      letter-spacing: 0.1em;
+    }
+
+    /* ── Field ── */
+    .field { margin-bottom: 16px; }
+    .field:last-child { margin-bottom: 0; }
+
+    .field label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #3a3835;
+      margin-bottom: 6px;
+      letter-spacing: 0.01em;
+    }
+    .field label .req, .section-label .req { color: #c0392b; margin-left: 2px; }
+    .field label .opt { color: #8a8880; font-weight: 400; font-size: 11px; margin-left: 4px; }
+
+    .field input[type="text"],
+    .field input[type="email"],
+    .field input[type="tel"],
+    .field input[type="url"],
+    .field select,
+    .field textarea {
+      width: 100%;
+      background: #fff;
+      border: 1px solid #dedad5;
+      border-radius: 8px;
+      padding: 10px 13px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      color: #3a3835;
+      outline: none;
+      transition: border-color 0.2s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    .field input::placeholder,
+    .field textarea::placeholder { color: #b8b5b0; }
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus { border-color: var(--accent); }
+
+    .field select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238a8880' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 13px center;
+      padding-right: 36px;
+      cursor: pointer;
+    }
+
+    .field textarea {
+      resize: vertical;
+      min-height: 90px;
+      line-height: 1.55;
+    }
+
+    /* ── Two columns ── */
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 520px) { .field-row { grid-template-columns: 1fr; } }
+
+    /* ── Char counter ── */
+    .char-count {
+      text-align: right;
+      font-size: 11px;
+      color: #b8b5b0;
+      margin-top: 4px;
+    }
+
+    /* ── Stage Toggle ── */
+    .stage-group {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .stage-btn {
+      padding: 7px 16px;
+      border-radius: 8px;
+      border: 1px solid #dedad5;
+      background: #fff;
+      font-family: var(--font-body);
+      font-size: 13px;
+      color: #6b6865;
+      cursor: pointer;
+      transition: all 0.18s;
+      font-weight: 500;
+    }
+    .stage-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .stage-btn.active {
+      background: #1a3580;
+      border-color: #1a3580;
+      color: #fff;
+    }
+
+    /* ── Pitch Deck tabs ── */
+    .pitch-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0;
+      border: 1px solid #dedad5;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+    .pitch-tab {
+      padding: 10px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 500;
+      color: #6b6865;
+      cursor: pointer;
+      background: #fff;
+      border: none;
+      transition: all 0.18s;
+      font-family: var(--font-body);
+    }
+    .pitch-tab:not(:last-child) { border-right: 1px solid #dedad5; }
+    .pitch-tab.active { background: #1a3580; color: #fff; }
+
+    .dropzone {
+      border: 1.5px dashed #dedad5;
+      border-radius: 8px;
+      padding: 28px 20px;
+      text-align: center;
+      cursor: pointer;
+      background: #faf9f7;
+      transition: border-color 0.2s;
+    }
+    .dropzone:hover { border-color: var(--accent); }
+    .dropzone svg { margin: 0 auto 10px; color: #b8b5b0; }
+    .dropzone p { font-size: 13px; font-weight: 600; color: #5a5855; margin-bottom: 3px; }
+    .dropzone span { font-size: 11px; color: #b8b5b0; }
+
+    .dropzone-hidden { display: none; }
+    .link-input-wrap { display: none; }
+    .link-input-wrap.visible { display: block; }
+
+    /* ── Add button ── */
+    .btn-add {
+      width: 100%;
+      padding: 10px;
+      border: 1.5px dashed #dedad5;
+      border-radius: 8px;
+      background: transparent;
+      font-family: var(--font-body);
+      font-size: 13px;
+      color: #6b6865;
+      cursor: pointer;
+      transition: all 0.18s;
+      margin-top: 14px;
+    }
+    .btn-add:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── Metric pairs ── */
+    .metric-desc {
+      font-size: 12px;
+      color: #8a8880;
+      margin-bottom: 14px;
+      line-height: 1.55;
+    }
+    .metric-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; position: relative; }
+    .metric-row .remove-btn {
+      position: absolute;
+      right: -22px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #c0bbb5;
+      font-size: 16px;
+      line-height: 1;
+      padding: 2px;
+    }
+    .metric-row .remove-btn:hover { color: #c0392b; }
+    #metrics-container { padding-right: 20px; }
+
+    /* ── Member card ── */
+    .member-card {
+      background: #fff;
+      border: 1px solid #dedad5;
+      border-radius: 10px;
+      padding: 18px;
+      margin-bottom: 12px;
+      position: relative;
+    }
+    .member-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: #8a8880;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 14px;
+    }
+    .member-remove {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #c0bbb5;
+      font-size: 18px;
+      line-height: 1;
+    }
+    .member-remove:hover { color: #c0392b; }
+
+    /* ── Submit ── */
+    .form-submit {
+      padding: 24px 28px;
+      background: #f5f4f0;
+      border-top: 1px solid #e2e0da;
+    }
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      background: #1a3580;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      letter-spacing: 0.01em;
+    }
+    .btn-submit:hover { background: var(--accent); }
+    .submit-note {
+      text-align: center;
+      font-size: 11px;
+      color: #b8b5b0;
+      margin-top: 10px;
+    }
+
+    /* ── Success overlay ── */
+    .success-msg {
+      display: none;
+      text-align: center;
+      padding: 60px 28px;
+    }
+    .success-msg.visible { display: block; }
+    .success-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #1a3580;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+    .success-msg h3 {
+      font-family: var(--font-display);
+      font-size: 24px;
+      color: #1a3835;
+      margin-bottom: 10px;
+    }
+    .success-msg p { font-size: 14px; color: #6b6865; }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="logo-wrap">
+        <div class="logo-k">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+            <path d="M6 3 L6 19 M6 11 L16 3 M6 11 L16 19" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="logo-text-wrap">
+          <span class="logo-name">Koinz Capital</span>
+          <span class="logo-sub">INTELLECTUAL CAPITAL FUND</span>
+        </div>
+      </a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="index.html#model">Model</a>
+        <a href="index.html#advisors">Advisors</a>
+        <a href="index.html#portfolio">Portfolio</a>
+      </div>
+      <a href="apply.html" class="nav-cta" style="background:var(--accent);color:#fff;">Aplicar no Batch →</a>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="mobile-menu" id="mobile-menu">
+      <a href="index.html">Home</a>
+      <a href="index.html#model">Model</a>
+      <a href="index.html#advisors">Advisors</a>
+      <a href="index.html#portfolio">Portfolio</a>
+      <a href="apply.html">Aplicar no Batch</a>
+    </div>
+  </nav>
+
+  <div class="apply-page">
+    <div class="apply-wrapper">
+
+      <div class="apply-header">
+        <span class="eyebrow">Batch 2025.2 — Inscrições Abertas</span>
+        <h1>Inscreva sua <em>startup</em></h1>
+        <p>Preencha o formulário abaixo para candidatar sua empresa ao Batch 2025.2 da Koinz Capital.</p>
+      </div>
+
+      <div class="form-card">
+        <form id="apply-form" novalidate>
+
+          <!-- SOBRE A STARTUP -->
+          <div class="form-section">
+            <div class="section-label">Sobre a Startup</div>
+
+            <div class="field">
+              <label>Nome da startup <span class="req">*</span></label>
+              <input type="text" name="startup_name" placeholder="Ex: Koinz Capital" required />
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label>Website ou LinkedIn<span class="req">*</span></label>
+                <input type="url" name="website" placeholder="https://suastartup.com.br" />
+              </div>
+              <div class="field">
+                <label>Vertical / Setor <span class="req">*</span></label>
+                <select name="vertical" required>
+                  <option value="" disabled selected>Selecione</option>
+                  <option>Fintech</option>
+                  <option>Healthtech</option>
+                  <option>Edtech</option>
+                  <option>SaaS B2B</option>
+                  <option>Marketplace</option>
+                  <option>Agritech</option>
+                  <option>Legaltech</option>
+                  <option>Proptech</option>
+                  <option>Logtech</option>
+                  <option>Varejo</option>
+                  <option>Outro</option>
+                </select>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- PITCH DECK -->
+          <div class="form-section">
+            <div class="section-label">Pitch Deck <span class="req">*</span></div>
+
+            <div class="pitch-tabs">
+              <button type="button" class="pitch-tab active" id="tab-upload" onclick="switchPitchTab('upload')">Upload PDF</button>
+              <button type="button" class="pitch-tab" id="tab-link" onclick="switchPitchTab('link')">Link externo</button>
+              <button type="button" class="pitch-tab" id="tab-text" onclick="switchPitchTab('text')">Texto</button>
+            </div>
+
+            <div id="pitch-upload">
+              <div class="dropzone" onclick="document.getElementById('pdf-input').click()">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                  <line x1="12" y1="18" x2="12" y2="12"/>
+                  <line x1="9" y1="15" x2="15" y2="15"/>
+                </svg>
+                <p>Arraste ou clique para enviar</p>
+                <span>PDF até 20MB</span>
+                <input type="file" id="pdf-input" name="pitch_pdf" accept=".pdf" style="display:none" onchange="handleFileSelect(this)" />
+              </div>
+              <p id="file-name" style="font-size:12px;color:#6b6865;margin-top:6px;text-align:center;"></p>
+            </div>
+
+            <div class="link-input-wrap" id="pitch-link">
+              <div class="field">
+                <input type="url" name="pitch_link" placeholder="https://drive.google.com/..." />
+              </div>
+            </div>
+
+            <div class="link-input-wrap" id="pitch-text">
+              <div class="field">
+                <textarea name="pitch_text" rows="8" maxlength="3000" placeholder="Descreva sua empresa, o problema que resolve, a solução, mercado e diferenciais..." oninput="updateCount(this, 3000)"></textarea>
+                <span class="char-count" style="font-size:11px;color:#6b6865;text-align:right;display:block;margin-top:4px;">0/3000</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- BIG NUMBERS -->
+          <div class="form-section">
+            <div class="section-label">Big Numbers <span class="badge">Livre</span></div>
+            <p class="metric-desc">Compartilhe os números mais relevantes da sua operação. MRR, faturamento, clientes ativos, crescimento MoM, retenção, margem, captação prévia — o que fizer sentido para o seu estágio.</p>
+
+            <div id="metrics-container">
+              <div class="metric-row">
+                <input type="text" name="metric_name[]" placeholder="Ex: Faturamento" />
+                <input type="text" name="metric_value[]" placeholder="Ex: R$ 45.000/mês" />
+              </div>
+            </div>
+            <button type="button" class="btn-add" onclick="addMetric()">+ Adicionar métrica</button>
+          </div>
+
+          <!-- EQUIPE -->
+          <div class="form-section">
+            <div class="section-label">Equipe</div>
+            <p class="section-hint">Para equipes com mais de 2 integrantes, inclua apenas os fundadores.<br>No mini currículo de cada um, informe sua participação no cap table.</p>
+
+            <div id="members-container">
+              <div class="member-card" data-index="1">
+                <div class="member-title">Membro 1</div>
+                <div class="field-row">
+                  <div class="field">
+                    <label>Nome completo <span class="req">*</span></label>
+                    <input type="text" name="member_name[]" placeholder="João Silva" required />
+                  </div>
+                  <div class="field">
+                    <label>Cargo <span class="req">*</span></label>
+                    <input type="text" name="member_role[]" placeholder="CEO / CTO / CMO..." required />
+                  </div>
+                </div>
+                <div class="field">
+                  <label>LinkedIn <span class="opt">opcional</span></label>
+                  <input type="url" name="member_linkedin[]" placeholder="https://linkedin.com/in/joaosilva" />
+                </div>
+                <div class="field">
+                  <label>Mini currículo <span class="req">*</span></label>
+                  <textarea name="member_bio[]" placeholder="Experiências relevantes, formação, empresas anteriores..." maxlength="300" oninput="updateCount(this, 300)" required></textarea>
+                  <div class="char-count">0/300</div>
+                </div>
+              </div>
+            </div>
+            <button type="button" class="btn-add" onclick="addMember()">+ Adicionar membro</button>
+          </div>
+
+          <!-- CONTEXTO ESTRATÉGICO -->
+          <div class="form-section"> 
+            <div class="section-label">Contexto Estratégico <span class="badge">Livre</span></div>
+
+            <div class="field">
+              <label>Principais desafios atuais <span class="opt"></span></label>
+              <textarea name="challenges" placeholder="Quais são os maiores obstáculos que a startup enfrenta hoje?" maxlength="400" oninput="updateCount(this, 400)" required style="min-height:100px;"></textarea>
+              <div class="char-count">0/400</div>
+            </div>
+
+            <div class="field">
+              <label>Objetivos com o apoio da Koinz Capital <span class="opt"></span></label>
+              <textarea name="objectives" placeholder="O que você espera alcançar com o apoio da Koinz Capital?" maxlength="400" oninput="updateCount(this, 400)" required style="min-height:100px;"></textarea>
+              <div class="char-count">0/400</div>
+            </div>
+          </div>
+
+          <!-- CONTATO -->
+          <div class="form-section">
+            <div class="section-label">Contato</div>
+
+            <div class="field-row">
+              <div class="field">
+                <label>Nome do responsável <span class="req">*</span></label>
+                <input type="text" name="contact_name" placeholder="Nome completo" required />
+              </div>
+              <div class="field">
+                <label>E-mail <span class="req">*</span></label>
+                <input type="email" name="contact_email" placeholder="founder@startup.com" required />
+              </div>
+            </div>
+
+            <div class="field">
+              <label>WhatsApp <span class="req">*</span></label>
+              <input type="tel" name="contact_whatsapp" placeholder="(31) 99999-9999" required />
+            </div>
+          </div>
+
+          <!-- SUBMIT -->
+          <div class="form-submit">
+            <button type="submit" class="btn-submit">Enviar inscrição</button>
+            <p class="submit-note">Ao enviar, você concorda com nossa política de privacidade.</p>
+          </div>
+
+        </form>
+
+        <!-- SUCCESS -->
+        <div class="success-msg" id="success-msg">
+          <div class="success-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </div>
+          <h3>Inscrição enviada!</h3>
+          <p>Recebemos sua candidatura para o Batch 2025.2.<br>Nossa equipe entrará em contato em até 5 dias úteis.</p>
+          <a href="index.html" style="display:inline-block;margin-top:24px;font-size:13px;color:var(--accent);">← Voltar para o site</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // Nav scroll
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 40);
+    });
+    document.getElementById('hamburger').addEventListener('click', () => {
+      document.getElementById('mobile-menu').classList.toggle('open');
+    });
+
+    // Pitch deck tab switch
+    function switchPitchTab(tab) {
+      ['upload', 'link', 'text'].forEach(t => {
+        document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+      });
+      document.getElementById('pitch-upload').style.display = tab === 'upload' ? 'block' : 'none';
+      document.getElementById('pitch-link').classList.toggle('visible', tab === 'link');
+      document.getElementById('pitch-text').classList.toggle('visible', tab === 'text');
+    }
+
+    // File select feedback
+    function handleFileSelect(input) {
+      const file = input.files[0];
+      document.getElementById('file-name').textContent = file ? '✓ ' + file.name : '';
+    }
+
+    // Char counter
+    function updateCount(el, max) {
+      const counter = el.parentElement.querySelector('.char-count');
+      if (counter) counter.textContent = el.value.length + '/' + max;
+    }
+
+    // Add metric row
+    let metricCount = 2;
+    function addMetric() {
+      metricCount++;
+      const container = document.getElementById('metrics-container');
+      const row = document.createElement('div');
+      row.className = 'metric-row';
+      row.innerHTML = `
+        <input type="text" name="metric_name[]" placeholder="Métrica" />
+        <input type="text" name="metric_value[]" placeholder="Valor" />
+        <button type="button" class="remove-btn" onclick="this.parentElement.remove()">×</button>
+      `;
+      container.appendChild(row);
+    }
+
+    // Add member card
+    let memberCount = 1;
+    function addMember() {
+      memberCount++;
+      const container = document.getElementById('members-container');
+      const card = document.createElement('div');
+      card.className = 'member-card';
+      card.innerHTML = `
+        <div class="member-title">Membro ${memberCount}</div>
+        <button type="button" class="member-remove" onclick="this.parentElement.remove()">×</button>
+        <div class="field-row">
+          <div class="field">
+            <label>Nome completo <span class="req">*</span></label>
+            <input type="text" name="member_name[]" placeholder="Nome completo" />
+          </div>
+          <div class="field">
+            <label>Cargo <span class="req">*</span></label>
+            <input type="text" name="member_role[]" placeholder="CEO / CTO / CMO..." />
+          </div>
+        </div>
+        <div class="field">
+          <label>LinkedIn <span class="opt">opcional</span></label>
+          <input type="url" name="member_linkedin[]" placeholder="https://linkedin.com/in/..." />
+        </div>
+        <div class="field">
+          <label>Mini currículo <span class="req">*</span></label>
+          <textarea name="member_bio[]" placeholder="Experiências relevantes, formação, empresas anteriores..." maxlength="300" oninput="updateCount(this, 300)"></textarea>
+          <div class="char-count">0/300</div>
+        </div>
+      `;
+      container.appendChild(card);
+    }
+
+    // Form submit
+    document.getElementById('apply-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const activeTab = document.querySelector('.pitch-tab.active').id.replace('tab-', '');
+      const hasPdf = activeTab === 'upload' && document.getElementById('pdf-input').files.length > 0;
+      const hasLink = activeTab === 'link' && document.querySelector('[name="pitch_link"]').value.trim();
+      const hasText = activeTab === 'text' && document.querySelector('[name="pitch_text"]').value.trim();
+      if (!hasPdf && !hasLink && !hasText) {
+        alert('Por favor, envie o Pitch Deck (PDF, link ou texto).');
+        return;
+      }
+      // Show success
+      this.style.display = 'none';
+      document.getElementById('success-msg').classList.add('visible');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+</body>
+</html>
